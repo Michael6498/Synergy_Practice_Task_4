@@ -21,5 +21,7 @@
 <img width="1902" height="951" alt="image" src="https://github.com/user-attachments/assets/837baae6-b745-41f1-a1aa-b481f7d6b2d5" />
 <img width="1902" height="945" alt="image" src="https://github.com/user-attachments/assets/ee681d36-7377-44aa-80cf-a68d3f997e15" />
 <img width="1895" height="950" alt="image" src="https://github.com/user-attachments/assets/8e0c6f58-e1d5-4fc6-955b-1a9e7ab0a1d4" />
+
 ## Схема базы данных
+
 <img width="697" height="537" alt="image" src="https://github.com/user-attachments/assets/b5c121c2-971d-4a4d-bc72-4f802894d503" />
