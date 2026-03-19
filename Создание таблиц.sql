@@ -4,7 +4,7 @@ GO
 USE Tourism;
 GO
 
--- 1. Создание таблицы-справочника стран
+-- 1. РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹-СЃРїСЂР°РІРѕС‡РЅРёРєР° СЃС‚СЂР°РЅ
 CREATE TABLE Countries (
     CountryID INT PRIMARY KEY IDENTITY(1,1),
     CountryName NVARCHAR(100) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE Countries (
     Description NVARCHAR(MAX)
 );
 
--- 2. Создание таблицы-справочника отелей
+-- 2. РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹-СЃРїСЂР°РІРѕС‡РЅРёРєР° РѕС‚РµР»РµР№
 CREATE TABLE Hotels (
     HotelID INT PRIMARY KEY IDENTITY(1,1),
     HotelName NVARCHAR(200) NOT NULL,
@@ -21,14 +21,14 @@ CREATE TABLE Hotels (
     FOREIGN KEY (CountryID) REFERENCES Countries(CountryID)
 );
 
--- 3. Создание таблицы-справочника дополнительных услуг
+-- 3. РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹-СЃРїСЂР°РІРѕС‡РЅРёРєР° РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СѓСЃР»СѓРі
 CREATE TABLE Services (
     ServiceID INT PRIMARY KEY IDENTITY(1,1),
     ServiceName NVARCHAR(100) NOT NULL,
     ServicePrice DECIMAL(10, 2) NOT NULL
 );
 
--- 4. Создание таблицы переменной информации (Бронирования)
+-- 4. РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РїРµСЂРµРјРµРЅРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё (Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ)
 CREATE TABLE Bookings (
     BookingID INT PRIMARY KEY IDENTITY(1,1),
     ClientName NVARCHAR(250) NOT NULL,
