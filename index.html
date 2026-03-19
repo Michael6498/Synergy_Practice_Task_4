@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueTravel — Панель управления</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-active { background: #f1f5f9; color: #0f172a; }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25rem;
+        }
+    </style>
+</head>
+<body class="bg-[#fcfcfc] text-slate-900">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-slate-100 flex flex-col fixed h-full z-10">
+            <div class="p-6 mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="text-blue-600"><i data-lucide="globe-2" size="28"></i></div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">TrueTravel</span>
+                </div>
+            </div>
+            <nav class="flex-1 px-3 space-y-1">
+                <button onclick="showTab('bookings')" id="btn-bookings" class="nav-active w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all">
+                    <i data-lucide="list" size="18"></i> Бронирование
+                </button>
+                <button onclick="showTab('countries')" id="btn-countries" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                    <i data-lucide="map" size="18"></i> Страны
+                </button>
+                <button onclick="showTab('hotels')" id="btn-hotels" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                    <i data-lucide="building" size="18"></i> Отели
+                </button>
+                <button onclick="showTab('services')" id="btn-services" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                    <i data-lucide="plus-circle" size="18"></i> Услуги
+                </button>
+            </nav>
+        </aside>
+
+        <main class="ml-64 flex-1 p-8">
+            <div id="tab-bookings" class="tab-content active space-y-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Управление турами</h1>
+                    <p class="text-slate-400 text-sm">Создание и список актуальных бронирований</p>
+                </div>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    <div class="xl:col-span-4 bg-white rounded-2xl border border-slate-200 p-6">
+                        <h3 class="font-bold text-slate-800 mb-6">Новая заявка</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Клиент</label>
+                                <input type="text" id="client-name" placeholder="Иванов Иван" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 font-medium text-sm transition-all">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Страна</label>
+                                    <select id="country-select" onchange="filterHotels()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm font-medium outline-none">
+                                        <option value="">Выбор...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Отель</label>
+                                    <select id="hotel-select" onchange="calcTotal()" disabled class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm font-medium outline-none disabled:opacity-50">
+                                        <option value="">Отель...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Доп. услуги</label>
+                                <select id="service-select" onchange="calcTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
+                                    <option value="">Нет</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Дата заезда</label>
+                                    <input type="date" id="date-start" onchange="calcTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm font-medium outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Дата выезда</label>
+                                    <input type="date" id="date-end" onchange="calcTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm font-medium outline-none">
+                                </div>
+                            </div>
+                            <div class="p-5 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Итоговая сумма</span>
+                                <div class="text-2xl font-bold text-slate-900 mt-1" id="total-price">0 ₽</div>
+                            </div>
+                            <button onclick="addOrder()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Забронировать</button>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-8 bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 border-b border-slate-100">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase">Клиент</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase">Страна / Отель</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase">Сроки</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase text-right">Цена</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase text-center">Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-body" class="divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-countries" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Страны</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="countries-grid"></div>
+            </div>
+
+            <div id="tab-hotels" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">База отелей</h2>
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left" id="hotels-table">
+                        <thead class="bg-slate-50">
+                            <tr class="text-[10px] font-bold text-slate-400 uppercase">
+                                <th class="px-6 py-4">Отель</th>
+                                <th class="px-6 py-4">Страна</th>
+                                <th class="px-6 py-4 text-right">Цена/ночь</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-medium"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-services" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Пакеты услуг</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="services-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let state = { countries: [], hotels: [], services: [], bookings: [] };
+
+        async function fetchAllData() {
+            try {
+                const response = await fetch(`${API_URL}/data`);
+                state = await response.json();
+                console.log('Первая бронь:', JSON.stringify(state.bookings[0]));
+                renderUI();
+                updateFormSelectors();
+            } catch (err) { console.error('Ошибка загрузки данных:', err); }
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelectorAll('nav button').forEach(el => {
+                el.classList.remove('nav-active');
+                el.classList.add('text-slate-500');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('nav-active');
+            activeBtn.classList.remove('text-slate-500');
+            lucide.createIcons();
+        }
+
+        function updateFormSelectors() {
+            const cSelect = document.getElementById('country-select');
+            const sSelect = document.getElementById('service-select');
+            cSelect.innerHTML = '<option value="">Выбор...</option>' +
+                state.countries.map(c => `<option value="${c.CountryID}">${c.CountryName}</option>`).join('');
+            sSelect.innerHTML = '<option value="">Без доп. услуг</option>' +
+                state.services.map(s => `<option value="${s.ServiceID}">${s.ServiceName} (+${s.ServicePrice} ₽)</option>`).join('');
+        }
+
+        function filterHotels() {
+            const cId = document.getElementById('country-select').value;
+            const hSelect = document.getElementById('hotel-select');
+            if (cId) {
+                hSelect.disabled = false;
+                const filtered = state.hotels.filter(h => h.CountryID == cId);
+                hSelect.innerHTML = '<option value="">Выбор...</option>' +
+                    filtered.map(h => `<option value="${h.HotelID}">${h.HotelName}</option>`).join('');
+            } else {
+                hSelect.disabled = true;
+                hSelect.innerHTML = '<option value="">Отель...</option>';
+            }
+            calcTotal();
+        }
+
+        function calcTotal() {
+            const hId = document.getElementById('hotel-select').value;
+            const sId = document.getElementById('service-select').value;
+            const d1 = document.getElementById('date-start').value;
+            const d2 = document.getElementById('date-end').value;
+            let total = 0;
+            if (hId && d1 && d2) {
+                const hotel = state.hotels.find(h => h.HotelID == hId);
+                const service = state.services.find(s => s.ServiceID == sId);
+                const days = Math.max(0, Math.ceil((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24)));
+                total = (days * (hotel ? hotel.PricePerNight : 0));
+                if (service) total += parseFloat(service.ServicePrice);
+            }
+            document.getElementById('total-price').innerText = total.toLocaleString() + ' ₽';
+            return total;
+        }
+
+        async function addOrder() {
+            const name = document.getElementById('client-name').value;
+            const hId = document.getElementById('hotel-select').value;
+            const sId = document.getElementById('service-select').value;
+            const d1 = document.getElementById('date-start').value;
+            const d2 = document.getElementById('date-end').value;
+
+            if (!name || !hId || !d1 || !d2) return alert('Ошибка: не все поля заполнены.');
+
+            const dateIn = new Date(d1);
+            const dateOut = new Date(d2);
+            const days = Math.ceil((dateOut - dateIn) / (1000 * 60 * 60 * 24));
+
+            if (days === 0) return alert('Ошибка: дата выезда не может совпадать с датой заезда — минимум 1 ночь.');
+            if (days < 0) return alert('Ошибка: дата выезда не может быть раньше даты заезда.');
+
+            const bookingData = { ClientName: name, HotelID: parseInt(hId), ServiceID: sId ? parseInt(sId) : null, CheckInDate: d1, CheckOutDate: d2, TotalCost: calcTotal() };
+            try {
+                const res = await fetch(`${API_URL}/bookings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bookingData) });
+                if (res.ok) {
+                    alert('Бронирование успешно создано!');
+                    document.getElementById('client-name').value = '';
+                    document.getElementById('country-select').value = '';
+                    document.getElementById('hotel-select').disabled = true;
+                    document.getElementById('hotel-select').innerHTML = '<option value="">Отель...</option>';
+                    document.getElementById('service-select').value = '';
+                    document.getElementById('date-start').value = '';
+                    document.getElementById('date-end').value = '';
+                    document.getElementById('total-price').innerText = '0 ₽';
+                    await fetchAllData();
+                } else {
+                    const err = await res.json();
+                    alert('Ошибка: ' + err.error);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function deleteBooking(id) {
+            console.log('Удаляем бронь ID:', id);
+            if (!confirm('Удалить это бронирование?')) return;
+            try {
+                const res = await fetch(`${API_URL}/bookings/${id}`, { method: 'DELETE' });
+                console.log('Статус ответа:', res.status);
+                if (res.ok) {
+                    await fetchAllData();
+                } else {
+                    const err = await res.json();
+                    alert('Ошибка удаления: ' + err.error);
+                }
+            } catch (err) {
+                console.error('Ошибка fetch при удалении:', err);
+            }
+        }
+
+        function renderUI() {
+            document.getElementById('bookings-body').innerHTML = state.bookings.map(b => {
+                const id = b.BookingID;
+                console.log('Рендерим бронь, ID:', id);
+                return `
+                <tr class="hover:bg-slate-50 transition-all">
+                    <td class="px-6 py-4 font-bold text-slate-800">${b.ClientName || '---'}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-semibold text-slate-700">${b.CountryName || '---'}</div>
+                        <div class="text-[11px] text-slate-400 font-medium">${b.HotelName || '---'}</div>
+                    </td>
+                    <td class="px-6 py-4 text-xs font-medium text-slate-500">
+                        ${b.CheckInDate ? new Date(b.CheckInDate).toLocaleDateString('ru-RU') : '?'} —
+                        ${b.CheckOutDate ? new Date(b.CheckOutDate).toLocaleDateString('ru-RU') : '?'}
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-slate-900">${parseFloat(b.TotalCost || 0).toLocaleString()} ₽</td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="deleteBooking(${id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all" title="Удалить">
+                            <i data-lucide="trash-2" size="16"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('') || `<tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 text-sm">Бронирований пока нет</td></tr>`;
+
+            document.getElementById('hotels-table').querySelector('tbody').innerHTML = state.hotels.map(h => `
+                <tr class="hover:bg-slate-50 transition-all">
+                    <td class="px-6 py-4 font-bold text-slate-800">${h.HotelName}</td>
+                    <td class="px-6 py-4 text-slate-500 text-sm font-medium">${h.CountryName || 'ID: ' + h.CountryID}</td>
+                    <td class="px-6 py-4 text-right font-bold text-blue-600">${parseFloat(h.PricePerNight).toLocaleString()} ₽</td>
+                </tr>
+            `).join('') || `<tr><td colspan="3" class="px-6 py-10 text-center text-slate-400 text-sm">Отели не найдены</td></tr>`;
+
+            document.getElementById('countries-grid').innerHTML = state.countries.map(c => `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                    <div class="flex items-start justify-between mb-2">
+                        <h4 class="text-xl font-bold text-slate-800">${c.CountryName}</h4>
+                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg ml-3 flex-shrink-0 ${c.IsVisaRequired
+                            ? 'bg-red-50 text-red-500 border border-red-100'
+                            : 'bg-green-50 text-green-600 border border-green-100'}">
+                            ${c.IsVisaRequired ? '🛂 Нужна виза' : '✓ Без визы'}
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-500">${c.Description || ''}</p>
+                </div>
+            `).join('') || `<p class="text-slate-400 text-sm">Страны не найдены</p>`;
+
+            document.getElementById('services-grid').innerHTML = state.services.map(s => `
+                <div class="flex justify-between items-center p-5 rounded-xl border border-slate-100 bg-white">
+                    <div class="font-bold text-slate-800">${s.ServiceName}</div>
+                    <div class="font-bold text-blue-600">${parseFloat(s.ServicePrice).toLocaleString()} ₽</div>
+                </div>
+            `).join('') || `<p class="text-slate-400 text-sm">Услуги не найдены</p>`;
+
+            lucide.createIcons();
+        }
+
+        window.onload = fetchAllData;
+    </script>
+</body>
+</html>
+
+<!--
+    Запуск сервера:
+    cd '.\HTML & CSS\'
+    cd .\Tourism\
+    node server.js
+-->
